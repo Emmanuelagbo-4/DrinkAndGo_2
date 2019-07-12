@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewData["Title"] = "List";
+}
+
+<h2>List</h2>
+
+
+<h2>List of drinks are shown here</h2>
+<h3>@Model.CurrentCategory</h3>
+@{
+    foreach (var drink in Model.Drinks)
+    {
+    <div class="col-sm-4 col-lg-4 col-md-4">
+        <div class="thumbnail">
+            <img src="@drink.ImageThumbnailUrl" alt="" />
+            <div class="caption">
+                <h3 class="pull-right">@drink.Price.ToString("c")</h3>
+                <h3>
+                    <a>@drink.Name</a>
+                </h3>
+                <p>@drink.ShortDescription</p>
+            </div>
+        </div>
+    </div>
+    }
+}
