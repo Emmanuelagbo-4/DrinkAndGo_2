@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DrinkAndGo_2.ViewModels;
 using DrinkAndGo_2.Data.Interfaces;
+using DrinkAndGo_2.Models;
 
 namespace DrinkAndGo_2.Controllers
 {
@@ -19,13 +20,34 @@ namespace DrinkAndGo_2.Controllers
             _drinkRepository = drinkRepository;
         }
 
-        public IActionResult List()
+        public ViewResult List(string category)
         {
-            ViewBag.Name = "DotNet How?";
-            DrinkListViewModel vm = new DrinkListViewModel();
-            vm.Drinks = _drinkRepository.Drinks;
-            vm.CurrentCategory = "DrinkCategory";
-            return View(vm);
+            string _category = category;
+            IEnumerable<Drinks> drinks;
+
+            string currentCategory = string.Empty;
+            if (string.IsNullOrEmpty(category))
+            {
+                drinks = _drinkRepository.Drinks.OrderBy(n => n.DrinksId);
+                currentCategory = "All drinks";
+            }
+            else
+            {
+                if (string.Equals("Alcoholic", _category, StringComparison.OrdinalIgnoreCase))
+                {
+                    drinks = _drinkRepository.Drinks.Where(p => p.Category.CategoryName.Equals("Alcoholic")).OrderBy(p => p.Name);
+                }
+                else
+                    drinks = _drinkRepository.Drinks.Where(p => p.Category.CategoryName.Equals("Non-alcoholic")).OrderBy(p => p.Name);
+                currentCategory = _category;
+            }
+
+            var drinkListViewModel = new DrinkListViewModel
+            {
+                Drinks = drinks,
+                CurrentCategory = currentCategory
+            };
+           return View(drinkListViewModel);
         }
     }
 }

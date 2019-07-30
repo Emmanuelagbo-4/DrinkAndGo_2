@@ -33,6 +33,9 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    @await Component.InvokeAsync("CategoryMenu")
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">Contact Us</a></li>
+                    @await  Component.InvokeAsync("ShoppingCartSummary")
                 </ul>
             </div>
         </div>

@@ -39,7 +39,10 @@ namespace DrinkAndGo_2
                 options => options.UseSqlServer(ConfigurationRoot.GetConnectionString("DefaultConnection")));
             services.AddTransient<IDrinkRepository, DrinkRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
-          
+            services.AddScoped(sp => ShoppingCart.GetCart(sp));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
+           
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -49,6 +52,8 @@ namespace DrinkAndGo_2
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMemoryCache();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,7 +63,13 @@ namespace DrinkAndGo_2
             app.UseDeveloperExceptionPage();
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
+            app.UseSession();
+            //app.UseMvcWithDefaultRoute();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(name: "categoryFilter", template: "Drink/{action}/{category?}", defaults: new { Controller = "Drink", action = "List"});
+                routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
+            });
 
             DbInitializer.Seed(app);
         }

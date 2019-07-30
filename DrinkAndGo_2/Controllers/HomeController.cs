@@ -5,14 +5,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DrinkAndGo_2.Models;
+using DrinkAndGo_2.Data.Interfaces;
+using DrinkAndGo_2.ViewModels;
 
 namespace DrinkAndGo_2.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IDrinkRepository _drinkRepository;
+
+        public HomeController(IDrinkRepository drinkRepository)
         {
-            return View();
+            _drinkRepository = drinkRepository;
+        }
+
+        public ViewResult Index()
+        {
+            var homeViewModel = new HomeViewModel
+            {
+                PreferredDrinks = _drinkRepository.PreferredDrinks
+            };
+            return View(homeViewModel);
         }
 
         public IActionResult About()
